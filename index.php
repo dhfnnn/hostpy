@@ -1,6 +1,7 @@
 <?php
+// Koneksikan database disini
 $conf = mysqli_connect("localhost", "root", "");
-$countfolders = glob(__DIR__ . '/*', GLOB_ONLYDIR); // Ambil hanya folder
+$countfolders = glob(__DIR__ . '/*', GLOB_ONLYDIR);
 $totalFolders = count($countfolders);
 $getfolders   = array_filter(glob(__DIR__ . '/*'), 'is_dir');
 
@@ -178,8 +179,6 @@ body {
                     $folders = array_filter(scandir($directoryPath), function ($item) use ($directoryPath) {
                         return is_dir($directoryPath . $item) && $item !== '.' && $item !== '..';
                     });
-
-                    // Filter folder berdasarkan kata kunci pencarian
                     $getfolders = array_filter($folders, function ($folder) use ($foldernames) {
                         return stripos($folder, $foldernames) !== false;
                     });
@@ -436,22 +435,16 @@ body {
                 echo "Path bukan folder atau tidak ditemukan.";
                 return false;
             }
-
-            // Membuka folder dan membaca isinya
-            $files = array_diff(scandir($folderPath), ['.', '..']); // Mengabaikan '.' dan '..'
+            $files = array_diff(scandir($folderPath), ['.', '..']);
 
             foreach ($files as $file) {
                 $filePath = $folderPath . DIRECTORY_SEPARATOR . $file;
-
-                // Jika file adalah folder, panggil fungsi ini secara rekursif
                 if (is_dir($filePath)) {
                     deleteFolder($filePath);
                 } else {
-                    unlink($filePath); // Menghapus file
+                    unlink($filePath);
                 }
             }
-
-            // Menghapus folder kosong
             return rmdir($folderPath);
         }
         if (deleteFolder($deletefolder)) {
@@ -473,31 +466,24 @@ body {
         });
     </script>
     <script>
-        // Referensi elemen
         const themeSelector = document.getElementById('theme-selector');
         const htmlElement = document.documentElement;
         const currentThemeText = document.getElementById('current-theme');
-
-        // Fungsi untuk mengatur tema
         function setTheme(theme) {
-            htmlElement.setAttribute('data-theme', theme); // Mengubah atribut data-theme
-            currentThemeText.textContent = theme.charAt(0).toUpperCase() + theme.slice(1); // Menampilkan nama tema
-            themeSelector.value = theme; // Menyesuaikan value di <select>
-            localStorage.setItem('selectedTheme', theme); // Menyimpan tema ke Local Storage
+            htmlElement.setAttribute('data-theme', theme);
+            currentThemeText.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
+            themeSelector.value = theme;
+            localStorage.setItem('selectedTheme', theme);
         }
-
-        // Memuat tema dari Local Storage saat halaman dimuat
         const savedTheme = localStorage.getItem('selectedTheme');
         if (savedTheme) {
             setTheme(savedTheme);
         } else {
-            setTheme('retro'); // Tema default
+            setTheme('retro');
         }
-
-        // Event listener untuk mendeteksi perubahan pada <select>
         themeSelector.addEventListener('change', function() {
-            const selectedTheme = this.value; // Mendapatkan nilai yang dipilih
-            setTheme(selectedTheme); // Mengatur tema baru
+            const selectedTheme = this.value;
+            setTheme(selectedTheme);
         });
     </script>
 </body>
